@@ -50,7 +50,7 @@ module Shoppe
     private
 
     def safe_params
-      params[:product_translation].permit(:name, :locale, :permalink, :description, :short_description)
+      params[:product_translation].permit(:name, :locale, :permalink, :description)
     end
   end
 end

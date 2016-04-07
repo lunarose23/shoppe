@@ -3,6 +3,7 @@ module Shoppe
     before_filter { @active_nav = :products }
     before_filter { params[:id] && @product = Shoppe::Product.root.find(params[:id]) }
 
+
     def index
       @products_paged = Shoppe::Product.root
                                        .includes(:translations, :stock_level_adjustments, :product_categories, :variants)
@@ -30,11 +31,13 @@ module Shoppe
 
     def new
       @product = Shoppe::Product.new
+
     end
 
     def create
       @product = Shoppe::Product.new(safe_params)
       if @product.save
+        @product.permalink === @product.name
         redirect_to :products, flash: { notice: t('shoppe.products.create_notice') }
       else
         render action: 'new'
@@ -51,11 +54,13 @@ module Shoppe
         render action: 'edit'
       end
     end
+    
 
     def destroy
       @product.destroy
       redirect_to :products, flash: { notice: t('shoppe.products.destroy_notice') }
     end
+
 
     def import
       if request.post?
@@ -72,7 +77,8 @@ module Shoppe
 
     def safe_params
       file_params = [:file, :parent_id, :role, :parent_type, file: []]
-      params[:product].permit(:name, :sku, :permalink, :description, :short_description, :weight, :price, :cost_price, :tax_rate_id, :stock_control, :active, :featured, :in_the_box, attachments: [default_image: file_params, data_sheet: file_params, extra: file_params], product_attributes_array: [:key, :value, :searchable, :public], product_category_ids: [])
+      params[:product].permit(:id, :name, :sku, :permalink, :description, :weight, :price, :cost_price, :tax_rate_id, :stock_control, :active, :featured, :in_the_box, attachments: [default_image: file_params, data_sheet: file_params, extra: file_params], product_attributes_array: [:key, :value, :searchable, :public], product_category_ids: [])
     end
+
   end
 end

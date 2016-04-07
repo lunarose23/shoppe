@@ -4,8 +4,7 @@
       %tr
         %th{:width => '20%'}
           = form_tag(:products, method: "get") do
-            = t('shoppe.products.sku')
-            = search_field_tag :sku, params[:sku], size: 25, min: 2, placeholder: t('shoppe.products.filter.sku')
+            = t('shoppe.products.delete')
         %th{:width => '40%'}
           = form_tag(:products, method: "get") do
             = t('shoppe.products.name')
@@ -22,7 +21,15 @@
             %th{:colspan => 4}= category.name
           - for product in products
             %tr
-              %td= product.sku
+              %td
+                = link_to t('shoppe.delete') , product, :method => :delete, :data => {:confirm => "Are you sure you wish to remove this product?"}
+                
+                = form_for product, :remote => true do |f|
+                  = f.check_box :active, :class => 'ajax'
+                  = f.label :active,  t('shoppe.products.active'), :remote => true
+                  = f.check_box :featured, :class => 'ajax'
+                  = f.label :featured, t('shoppe.products.featured')
+                  = f.submit t('shoppe.submit'), :style => 'display: none;'
               %td= link_to product.name, [:edit, product]
               - if product.has_variants?
                 %td.table{:colspan => 2}

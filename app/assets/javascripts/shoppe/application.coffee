@@ -7,6 +7,11 @@
 #= require_tree .
 
 $ ->
+  # call ajax for any item changed with class ajax
+  $('.ajax').bind 'change', ->
+      console.log('change')
+      $(this).parents('form').submit()
+
   # Automatically focus all fields with the 'focus' class
   $('input.focus').focus()
   

@@ -39,7 +39,6 @@ module Shoppe
     with_options if: proc { |p| p.parent.nil? } do |product|
       product.validate :has_at_least_one_product_category
       product.validates :description, presence: true
-      product.validates :short_description, presence: true
     end
     validates :name, presence: true
     validates :permalink, presence: true, uniqueness: true, permalink: true
@@ -50,6 +49,7 @@ module Shoppe
 
     # Before validation, set the permalink if we don't already have one
     before_validation { self.permalink = name.parameterize if permalink.blank? && name.is_a?(String) }
+    before_validation { self.sku = name.parameterize if sku.blank? && name.is_a?(String) }
 
     # All active products
     scope :active, -> { where(active: true) }
@@ -58,7 +58,7 @@ module Shoppe
     scope :featured, -> { where(featured: true) }
 
     # Localisations
-    translates :name, :permalink, :description, :short_description
+    translates :name, :permalink, :description
     scope :ordered, -> { includes(:translations).order(:name) }
 
     def attachments=(attrs)
@@ -170,7 +170,6 @@ module Shoppe
           product.name = row['name']
           product.sku = row['sku']
           product.description = row['description']
-          product.short_description = row['short_description']
           product.weight = row['weight']
           product.price = row['price'].nil? ? 0 : row['price']
           product.permalink = row['permalink']
